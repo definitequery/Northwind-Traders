@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Categories {
+  categoryId   Int        @id @default(autoincrement())
+  categoryName String?
+  description  String?
+  picture      Bytes?
+  products     Products[]
+}
+
+model CustomerCustomerDemo {
+  customerId           String
+  customerTypeId       String
+  customerDemographics CustomerDemographics @relation(fields: [customerTypeId], references: [customerTypeId], onDelete: NoAction, onUpdate: NoAction)
+  customers            Customers            @relation(fields: [customerId], references: [CustomerID], onDelete: NoAction, onUpdate: NoAction) @ignore
+
+  @@id([customerId, customerTypeId])
+}
+
+model CustomerDemographics {
+  customerTypeId       String                 @id
+  customerDesc         String?
+  customerCustomerDemo CustomerCustomerDemo[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Customers {
+  CustomerID           String?                @id
+  CompanyName          String?
+  ContactName          String?
+  ContactTitle         String?
+  Address              String?
+  City                 String?
+  Region               String?
+  PostalCode           String?
+  Country              String?
+  Phone                String?
+  Fax                  String?
+  CustomerCustomerDemo CustomerCustomerDemo[]
+  Orders               Orders[]
+
+  @@ignore
+}
+
+model EmployeeTerritories {
+  employeeId  Int
+  territoryId String
+  territories Territories @relation(fields: [territoryId], references: [territoryId], onDelete: NoAction, onUpdate: NoAction)
+  employees   Employees   @relation(fields: [employeeId], references: [employeeId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([employeeId, territoryId])
+}
+
+model Employees {
+  employeeId          Int                   @id @default(autoincrement())
+  lastName            String?
+  firstName           String?
+  title               String?
+  titleOfCourtesy     String?
+  birthDate           DateTime?
+  hireDate            DateTime?
+  address             String?
+  city                String?
+  region              String?
+  postalCode          String?
+  country             String?
+  homePhone           String?
+  extension           String?
+  photo               Bytes?
+  notes               String?
+  reportsTo           Int?
+  photoPath           String?
+  employeeTerritories EmployeeTerritories[]
+  employees           Employees?            @relation("EmployeesToEmployees", fields: [reportsTo], references: [employeeId], onDelete: NoAction, onUpdate: NoAction)
+  otherEmployees     Employees[]           @relation("EmployeesToEmployees")
+  orders              Orders[]
+}
+
+model OrderDetails {
+  orderId   Int
+  productId Int
+  unitPrice Float    @default(0)
+  quantity  Int      @default(1)
+  discount  Float    @default(0)
+  products  Products @relation(fields: [productId], references: [productId], onDelete: NoAction, onUpdate: NoAction)
+  orders    Orders   @relation(fields: [orderId], references: [orderId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([orderId, productId])
+  @@map("Order Details")
+}
+
+model Orders {
+  orderId       Int             @id @default(autoincrement())
+  customerId     String?
+  employeeId     Int?
+  orderDate      String?
+  requiredDate   String?
+  shippedDate    String?
+  shipVia        Int?
+  freight        Float?          @default(0)
+  shipName       String?
+  shipAddress    String?
+  shipCity       String?
+  shipRegion     String?
+  shipPostalCode String?
+  shipCountry    String?
+  orderDetails  OrderDetails[]
+  shippers       Shippers?       @relation(fields: [shipVia], references: [shipperId], onDelete: NoAction, onUpdate: NoAction)
+  customers      Customers?      @relation(fields: [customerId], references: [CustomerID], onDelete: NoAction, onUpdate: NoAction) @ignore
+  employees      Employees?      @relation(fields: [employeeId], references: [employeeId], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Products {
+  productId       Int             @id @default(autoincrement())
+  productName     String
+  supplierId      Int?
+  categoryId      Int?
+  quantityPerUnit String?
+  unitPrice       Float?          @default(0)
+  unitsInStock    Int?            @default(0)
+  unitsOnOrder    Int?            @default(0)
+  reorderLevel    Int?            @default(0)
+  discontinued    String          @default("0")
+  orderDetails    OrderDetails[]
+  suppliers       Suppliers?      @relation(fields: [supplierId], references: [supplierId], onDelete: NoAction, onUpdate: NoAction)
+  categories      Categories?     @relation(fields: [categoryId], references: [categoryId], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Regions {
+  regionId          Int           @id @default(autoincrement())
+  regionDescription String
+  territories       Territories[]
+}
+
+model Shippers {
+  shipperId   Int      @id @default(autoincrement())
+  companyName String
+  phone       String?
+  orders      Orders[]
+}
+
+model Suppliers {
+  supplierId   Int        @id @default(autoincrement())
+  companyName  String
+  contactName  String?
+  contactTitle String?
+  address      String?
+  city         String?
+  region       String?
+  postalCode   String?
+  country      String?
+  phone        String?
+  fax          String?
+  homePage     String?
+  products     Products[]
+}
+
+model Territories {
+  territoryId          String                @id
+  territoryDescription String
+  regionId             Int
+  employeeTerritories  EmployeeTerritories[]
+  regions              Regions               @relation(fields: [regionId], references: [regionId], onDelete: NoAction, onUpdate: NoAction)
+}
