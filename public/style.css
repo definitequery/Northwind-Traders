@@ -1,0 +1,29 @@
+body {
+  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #444;
+}
+
+th, td {
+  padding: 7px;
+}
+
+table {
+  border-spacing: 0px;
+}
+
+tr:nth-child(even) {
+  background-color: #F8F8F8;
+}
+
+tr:hover {
+  background-color: #EFEDEF;
+}
+
+a {
+  color: #107aff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

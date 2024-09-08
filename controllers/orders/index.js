@@ -6,12 +6,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const orders = await prisma.orders.findMany();
-  res.json({
-    status: 'success',
-    code: 200,
-    message: 'Orders retrieved successfully',
-    data: orders,
-  });
+  res.render('orders/index', { orders })
 });
 
 router.get('/:id', async (req, res) => {
