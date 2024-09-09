@@ -1,6 +1,6 @@
 # Northwind Traders Web Application
 ## Overview
-A REST API built on top of Microsoft's Northwind Traders sample database.
+A web application built on top of Microsoft's Northwind Traders sample database.
 
 ## Installation
 1. Clone the repo
